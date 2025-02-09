@@ -1,0 +1,18 @@
+services:
+  dbtest:
+    image: postgres:16.4-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: test
+
+  api:
+    build:
+      context: ./services/api/
+      dockerfile: Dockerfile.test
+    env_file:
+      - ./services/api/.env.example
+    ports:
+      - 3000:3000

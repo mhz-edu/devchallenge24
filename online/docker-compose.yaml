@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:16.4-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - boilerplate-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: api
+
+  api:
+    build:
+      context: ./services/api/
+      dockerfile: Dockerfile
+    env_file:
+      - ./services/api/.env.prod
+    ports:
+      - 3000:3000
+
+  processing:
+    build:
+      context: ./services/processing/
+      dockerfile: Dockerfile
+    ports:
+      - 4000:4000
+    depends_on:
+      - api
+
+  redis:
+      image: redis:alpine
+
+  whisper:
+    build:
+      context: ./services/whisper
+      dockerfile: Dockerfile
+
+volumes:
+  boilerplate-db:
